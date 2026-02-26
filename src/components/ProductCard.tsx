@@ -32,7 +32,7 @@ export default function ProductCard({ product, onQuickView, onWishlist, onCompar
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    addItem(product);
+    addItem({ ...product, price: getDynamicPrice() });
     openCart();
   };
 

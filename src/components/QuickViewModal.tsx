@@ -14,7 +14,7 @@ interface QuickViewModalProps {
 }
 
 export default function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps) {
-  const { addItem, items } = useCart();
+  const { addItem, items, openCart } = useCart();
   const [selectedSize, setSelectedSize] = React.useState('M');
   const [quantity, setQuantity] = React.useState(1);
 
@@ -33,6 +33,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
       price: getDynamicPrice()
     };
     addItem(itemToAdd);
+    openCart();
     onClose();
   };
 
@@ -90,6 +91,10 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                       alt={product.name}
                       fill
                       className="object-cover"
+                      unoptimized
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://placehold.co/600x800?text=Elegance+By+Mahnoor';
+                      }}
                     />
                     
                     {/* Badges */}
