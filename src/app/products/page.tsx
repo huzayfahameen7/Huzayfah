@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/ProductCard';
 import FilterSidebar from '@/components/FilterSidebar';
@@ -16,7 +16,7 @@ const sampleProducts: Product[] = [
     price: 4000,
     description: 'Elegant luxury lawn fabric with traditional hand-block printed designs',
     fabric: 'White Lawn',
-    images: ['/product image/product-1.jpg'],
+    images: ['/product-images/product-1.jpg'],
     category: 'Unstitched',
     blockPrintType: 'Traditional',
     customizable: true,
@@ -32,7 +32,7 @@ const sampleProducts: Product[] = [
     price: 5500,
     description: 'Premium pure silk fabric with traditional hand-block printed designs',
     fabric: 'Black Silk',
-    images: ['/product image/product-2.jpg'],
+    images: ['/product-images/product-2.jpg'],
     category: 'Premium',
     blockPrintType: 'Modern',
     customizable: true,
@@ -48,7 +48,7 @@ const sampleProducts: Product[] = [
     price: 4000,
     description: 'Lightweight organza fabric with traditional hand-block printed designs',
     fabric: 'White Organza',
-    images: ['/product image/product-3.jpg'],
+    images: ['/product-images/product-3.jpg'],
     category: 'Premium',
     blockPrintType: 'Contemporary',
     customizable: true,
@@ -64,7 +64,7 @@ const sampleProducts: Product[] = [
     price: 4500,
     description: 'Delicate chiffon fabric with traditional hand-block printed designs',
     fabric: 'White Chiffon',
-    images: ['/product image/product-4.jpg'],
+    images: ['/product-images/product-4.jpg'],
     category: 'Premium',
     blockPrintType: 'Modern',
     customizable: true,
@@ -80,7 +80,7 @@ const sampleProducts: Product[] = [
     price: 3500,
     description: 'Comfortable kaftan with traditional hand-block printed designs',
     fabric: 'Cotton',
-    images: ['/product image/product-5.jpg'],
+    images: ['/product-images/product-5.jpg'],
     category: 'Casual',
     blockPrintType: 'Traditional',
     customizable: true,
@@ -96,7 +96,7 @@ const sampleProducts: Product[] = [
     price: 3000,
     description: 'Summer lawn fabric with modern hand-block printed designs',
     fabric: 'Summer Lawn',
-    images: ['/product image/product-6.jpg'],
+    images: ['/product-images/product-6.jpg'],
     category: 'Unstitched',
     blockPrintType: 'Modern',
     customizable: true,
@@ -112,7 +112,7 @@ const sampleProducts: Product[] = [
     price: 6000,
     description: 'Elegant pishwas with traditional hand-block printed designs',
     fabric: 'Silk Blend',
-    images: ['/product image/product-7.jpg'],
+    images: ['/product-images/product-7.jpg'],
     category: 'Festive',
     blockPrintType: 'Traditional',
     customizable: true,
@@ -128,7 +128,7 @@ const sampleProducts: Product[] = [
     price: 5000,
     description: 'Luxurious silk kaftan with hand-block printed designs',
     fabric: 'Pure Silk',
-    images: ['/product image/product-8.jpg'],
+    images: ['/product-images/product-8.jpg'],
     category: 'Luxury',
     blockPrintType: 'Modern',
     customizable: true,
@@ -144,7 +144,7 @@ const sampleProducts: Product[] = [
     price: 2500,
     description: 'Comfortable cotton lawn with hand-block printed designs',
     fabric: 'Cotton Lawn',
-    images: ['/product image/product-9.jpg'],
+    images: ['/product-images/product-9.jpg'],
     category: 'Casual',
     blockPrintType: 'Traditional',
     customizable: true,
@@ -160,7 +160,7 @@ const sampleProducts: Product[] = [
     price: 4000,
     description: 'Lightweight chiffon dress with hand-block printed designs',
     fabric: 'Chiffon',
-    images: ['/product image/product-10.jpg'],
+    images: ['/product-images/product-10.jpg'],
     category: 'Party Wear',
     blockPrintType: 'Contemporary',
     customizable: true,
@@ -176,7 +176,7 @@ const sampleProducts: Product[] = [
     price: 5500,
     description: 'Premium organza suit with hand-block printed designs',
     fabric: 'Organza',
-    images: ['/product image/product-11.jpg'],
+    images: ['/product-images/product-11.jpg'],
     category: 'Festive',
     blockPrintType: 'Traditional',
     customizable: true,
@@ -192,7 +192,7 @@ const sampleProducts: Product[] = [
     price: 3200,
     description: 'Mixed lawn fabric with hand-block printed designs',
     fabric: 'Lawn Mix',
-    images: ['/product image/product-12.jpg'],
+    images: ['/product-images/product-12.jpg'],
     category: 'Unstitched',
     blockPrintType: 'Modern',
     customizable: true,
@@ -208,7 +208,7 @@ const sampleProducts: Product[] = [
     price: 6500,
     description: 'Premium festive wear with hand-block printed designs',
     fabric: 'Silk',
-    images: ['/product image/product-13.jpg'],
+    images: ['/product-images/product-13.jpg'],
     category: 'Festive',
     blockPrintType: 'Traditional',
     customizable: true,
@@ -218,7 +218,7 @@ const sampleProducts: Product[] = [
   }
 ];
 
-export default function ProductsPage() {
+function ProductsContent() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
   const [activeTab, setActiveTab] = useState('Trending');
@@ -264,6 +264,67 @@ export default function ProductsPage() {
   };
 
   return (
+    <div className="max-w-7xl mx-auto px-4 py-6">
+      <div className="flex gap-6">
+        {/* Sidebar Filters */}
+        <FilterSidebar
+          products={sampleProducts}
+          onFilterChange={setFilteredProducts}
+        />
+
+        {/* Main Content */}
+        <div className="flex-1">
+          {/* Product Tabs */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+            <div className="flex gap-6 border-b border-gray-200">
+              {['Trending', 'Popular', 'Recent'].map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`pb-3 px-4 font-semibold transition-all ${
+                    activeTab === tab
+                      ? 'text-crimson border-b-2 border-crimson'
+                      : 'text-gray-600 hover:text-crimson border-b-2 border-transparent'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Product Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredProducts.slice(0, 8).map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          {/* Pagination */}
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={loadMore}
+              disabled={isLoading}
+              className="bg-crimson text-white px-8 py-3 rounded-lg font-semibold uppercase tracking-widest hover:bg-crimson-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin"></div>
+                  Loading...
+                </div>
+              ) : (
+                'Load More Products'
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
     <div className="min-h-screen bg-[#FFDFB9]">
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
@@ -272,62 +333,9 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="flex gap-6">
-          {/* Sidebar Filters */}
-          <FilterSidebar 
-            products={sampleProducts}
-            onFilterChange={setFilteredProducts}
-          />
-
-          {/* Main Content */}
-          <div className="flex-1">
-            {/* Product Tabs */}
-            <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-              <div className="flex gap-6 border-b border-gray-200">
-                {['Trending', 'Popular', 'Recent'].map(tab => (
-                  <button
-                    key={tab}
-                    onClick={() => setActiveTab(tab)}
-                    className={`pb-3 px-4 font-semibold transition-all ${
-                      activeTab === tab
-                        ? 'text-crimson border-b-2 border-crimson'
-                        : 'text-gray-600 hover:text-crimson border-b-2 border-transparent'
-                    }`}
-                  >
-                    {tab}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Product Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProducts.slice(0, 8).map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-
-            {/* Pagination */}
-            <div className="flex justify-center mt-8">
-              <button
-                onClick={loadMore}
-                disabled={isLoading}
-                className="bg-crimson text-white px-8 py-3 rounded-lg font-semibold uppercase tracking-widest hover:bg-crimson-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isLoading ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent animate-spin"></div>
-                    Loading...
-                  </div>
-                ) : (
-                  'Load More Products'
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <Suspense fallback={<div className="flex justify-center py-12">Loading collection...</div>}>
+        <ProductsContent />
+      </Suspense>
     </div>
   );
 }

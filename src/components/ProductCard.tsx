@@ -17,7 +17,6 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, onQuickView, onWishlist, onCompare }: ProductCardProps) {
   const { addItem, openCart } = useCart();
-  const [isQuickViewOpen, setIsQuickViewOpen] = React.useState(false);
   const [isWishlisted, setIsWishlisted] = React.useState(false);
   const [isCompared, setIsCompared] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
@@ -40,17 +39,9 @@ export default function ProductCard({ product, onQuickView, onWishlist, onCompar
   const handleQuickView = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsQuickViewOpen(true);
     if (onQuickView) {
       onQuickView(product);
     }
-  };
-
-  const handleWhatsAppOrder = () => {
-    const message = encodeURIComponent(
-      `Asalam-o-Alaikum, I want to order ${product.name} (SKU: ${product.sku}). Is it available?`
-    );
-    window.open(`https://wa.me/923120026897?text=${message}`, '_blank');
   };
 
   const handleWishlist = (e: React.MouseEvent) => {

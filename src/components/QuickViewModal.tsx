@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Minus, Plus, Star } from 'lucide-react';
+import { X, Minus, Plus } from 'lucide-react';
 import Image from 'next/image';
 import { Product } from '../types';
 import { useCart } from '../contexts/CartContext';
@@ -44,33 +44,6 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
   };
 
   const isInCart = items.some(item => item.id === product.id && item.size === selectedSize);
-
-  const renderStars = (rating: number) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
-
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(
-        <Star key={i} className="w-4 h-4 fill-crimson text-crimson" />
-      );
-    }
-
-    if (hasHalfStar) {
-      stars.push(
-        <Star key="half" className="w-4 h-4 fill-crimson/50 text-crimson" />
-      );
-    }
-
-    const emptyStars = 5 - Math.ceil(rating);
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(
-        <Star key={`empty-${i}`} className="w-4 h-4 text-gray-300" />
-      );
-    }
-
-    return stars;
-  };
 
   return (
     <AnimatePresence>

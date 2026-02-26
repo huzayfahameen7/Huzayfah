@@ -19,7 +19,7 @@ const slides: Slide[] = [
     id: '1',
     title: 'Heritage Collection',
     subtitle: 'Discover timeless elegance with our hand-block printed masterpieces',
-    image: '/product image/hero-1.jpg',
+    image: '/product-images/hero-1.jpg',
     cta: 'Shop Now',
     ctaLink: '/products'
   },
@@ -27,7 +27,7 @@ const slides: Slide[] = [
     id: '2',
     title: 'Luxury Lawn',
     subtitle: 'Premium fabrics crafted with traditional artistry',
-    image: '/product image/hero-1.jpg',
+    image: '/product-images/hero-1.jpg',
     cta: 'Explore',
     ctaLink: '/products?category=luxury-lawn'
   },
