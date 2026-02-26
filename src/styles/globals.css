@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Bold Heritage - Global Theme Variables */
+
+:root {
+  /* Primary Colors */
+  --color-peach: #FFDFB9;
+  --color-crimson: #A4193D;
+  --color-crimson-light: #B8255F;
+  --color-crimson-dark: #8B1A1A;
+  --color-charcoal: #333333;
+
+  /* Secondary Colors */
+  --color-light-gray: #F5F5F5;
+  --color-medium-gray: #888888;
+  --color-dark-gray: #1A1A1A;
+
+  /* Typography */
+  --font-serif: "Cormorant Garamond", "Georgia", serif;
+  --font-display: "Playfair Display", "Cormorant Garamond", serif;
+  --font-sans: "Montserrat", "League Spartan", "-apple-system", "BlinkMacSystemFont", "Segoe UI", sans-serif;
+
+  /* Spacing */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  --spacing-3xl: 4rem;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(51, 51, 51, 0.05);
+  --shadow-md: 0 4px 6px rgba(51, 51, 51, 0.1);
+  --shadow-lg: 0 10px 15px rgba(51, 51, 51, 0.1);
+  --shadow-crimson: 0 10px 25px rgba(164, 25, 61, 0.15);
+}
+
+/* Global Body Background */
+body {
+  background-color: var(--color-peach);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--color-peach);
+  color: var(--color-charcoal);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Typography */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--color-charcoal);
+  margin-bottom: var(--spacing-md);
+}
+
+h1 {
+  font-size: 2.25rem;
+  line-height: 1.1;
+  font-weight: 900;
+}
+
+h2 {
+  font-size: 1.875rem;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+h3 {
+  font-size: 1.5rem;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+p {
+  margin-bottom: var(--spacing-md);
+  line-height: 1.8;
+  font-family: var(--font-sans);
+  letter-spacing: 0.025em;
+}
+
+/* Button Typography */
+button {
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Scrollbar Hide Utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Glassmorphism Effects */
+.glass {
+  background: rgba(249, 248, 241, 0.25);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.glass-sm {
+  background: rgba(249, 248, 241, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+.glass-lg {
+  background: rgba(249, 248, 241, 0.15);
+  backdrop-filter: blur(16px);
+}
+
+/* Component Styles */
+@layer components {
+  .btn {
+    @apply px-6 py-3 rounded-md font-semibold transition-all duration-300;
+  }
+
+  .btn-primary {
+    @apply bg-[#D4AF37] text-[#333333] hover:bg-[#B8960A] shadow-md hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply bg-[#333333] text-[#F9F8F1] hover:bg-[#1A1A1A];
+  }
+
+  .btn-outline {
+    @apply border-2 border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#333333];
+  }
+
+  .container-luxury {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .section {
+    @apply py-16 md:py-24 lg:py-32;
+  }
+
+  .gradient-gold {
+    background: linear-gradient(135deg, #D4AF37 0%, #E8D5B7 100%);
+  }
+
+  .text-luxury {
+    font-family: var(--font-serif);
+    @apply text-[#333333];
+  }
+
+  /* Glassmorphism Navigation Utilities */
+  .nav-glass {
+    @apply fixed top-0 left-0 right-0 z-50 backdrop-blur-sm;
+    background: rgba(249, 248, 241, 0.8);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+  }
+
+  .nav-glass-light {
+    @apply backdrop-blur-none;
+    background: rgba(249, 248, 241, 0.3);
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-ivory);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold);
+  border-radius: var(--radius-md);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-dark-gold);
+}
+
+/* Smooth Scroll Behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection Styling */
+::selection {
+  background-color: var(--color-gold);
+  color: var(--color-charcoal);
+}
+
+::-moz-selection {
+  background-color: var(--color-gold);
+  color: var(--color-charcoal);
+}
+
