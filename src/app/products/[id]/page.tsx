@@ -3,20 +3,141 @@
 import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Container, Heading, Button } from '@/components';
-import { getProductById } from '@/lib/products';
+import { getProductById, products as allProducts } from '@/lib/products';
 import { Product } from '@/types';
 import { useCart } from '@/contexts/CartContext';
+import { useToast } from '@/contexts/ToastContext';
+import ProductCard from '@/components/ProductCard';
+
+const RelatedProducts = ({ currentProduct }: { currentProduct: Product }) => {
+  const related = useMemo(() => {
+    return allProducts
+      .filter(p => p.category === currentProduct.category && p.id !== currentProduct.id)
+      .slice(0, 4);
+  }, [currentProduct]);
+
+  if (related.length === 0) return null;
+
+  return (
+    <div className="mt-20 pt-16 border-t" style={{ borderColor: 'rgba(212,175,55,0.2)' }}>
+      <div className="text-center mb-12">
+        <h2 className="text-2xl md:text-3xl font-serif text-charcoal-900 mb-4">
+          You May Also Like
+        </h2>
+        <p className="text-gray-600 text-lg font-light">
+          Complete your collection with these handcrafted pieces
+        </p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {related.map(product => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const SizeGuideModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            className="bg-white rounded-3xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-3xl font-serif text-charcoal">Size Guide</h2>
+              <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-8">
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left text-gray-500">
+                  <thead className="text-xs text-charcoal uppercase bg-gray-50 font-bold">
+                    <tr>
+                      <th className="px-6 py-4">Size</th>
+                      <th className="px-6 py-4">Chest</th>
+                      <th className="px-6 py-4">Waist</th>
+                      <th className="px-6 py-4">Hips</th>
+                      <th className="px-6 py-4">Length</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    <tr>
+                      <td className="px-6 py-4 font-bold text-charcoal">Small</td>
+                      <td className="px-6 py-4">36"</td>
+                      <td className="px-6 py-4">30"</td>
+                      <td className="px-6 py-4">38"</td>
+                      <td className="px-6 py-4">42"</td>
+                    </tr>
+                    <tr>
+                      <td className="px-6 py-4 font-bold text-charcoal">Medium</td>
+                      <td className="px-6 py-4">38"</td>
+                      <td className="px-6 py-4">32"</td>
+                      <td className="px-6 py-4">40"</td>
+                      <td className="px-6 py-4">44"</td>
+                    </tr>
+                    <tr>
+                      <td className="px-6 py-4 font-bold text-charcoal">Large</td>
+                      <td className="px-6 py-4">40"</td>
+                      <td className="px-6 py-4">34"</td>
+                      <td className="px-6 py-4">42"</td>
+                      <td className="px-6 py-4">45"</td>
+                    </tr>
+                    <tr>
+                      <td className="px-6 py-4 font-bold text-charcoal">X-Large</td>
+                      <td className="px-6 py-4">42"</td>
+                      <td className="px-6 py-4">36"</td>
+                      <td className="px-6 py-4">44"</td>
+                      <td className="px-6 py-4">46"</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="bg-ivory-50 p-6 rounded-2xl border border-gold/20">
+                <h3 className="font-bold text-charcoal mb-3">Measuring Tips</h3>
+                <ul className="text-sm space-y-2 text-gray-600 list-disc pl-4">
+                  <li>Measure around the fullest part of your chest.</li>
+                  <li>Measure around the narrowest part of your waistline.</li>
+                  <li>Measure around the fullest part of your hips.</li>
+                  <li>For unstitched items, the fabric length provided is 2.5 meters.</li>
+                </ul>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
 
 export default function ProductPage() {
   const params = useParams();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { addItem, openCart } = useCart();
+  const { addToast } = useToast();
   const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '923120026897';
 
   useEffect(() => {
@@ -43,6 +164,7 @@ export default function ProductPage() {
 
   const handleAddToCart = () => {
     addItem(product);
+    addToast(`${product.name} added to cart!`, 'success');
     openCart();
   };
 
@@ -134,8 +256,8 @@ export default function ProductPage() {
                   >
                     Handcrafted in Pakistan
                   </span>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800`}>
-                    In Stock
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${product.id === '1' ? 'bg-orange-100 text-orange-800' : 'bg-green-100 text-green-800'}`}>
+                    {product.id === '1' ? 'Limited Stock' : 'In Stock'}
                   </span>
                 </div>
               </div>
@@ -161,11 +283,11 @@ export default function ProductPage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div className="space-y-2">
                   <dt className="text-xs uppercase tracking-wider text-gray-500 font-medium">Fabric</dt>
-                  <dd className="text-charcoal-900 font-medium">Luxury Lawn</dd>
+                  <dd className="text-charcoal-900 font-medium">{product.fabric}</dd>
                 </div>
                 <div className="space-y-2">
-                  <dt className="text-xs uppercase tracking-wider text-gray-500 font-medium">Length</dt>
-                  <dd className="text-charcoal-900 font-medium">2.5m Unstitched</dd>
+                  <dt className="text-xs uppercase tracking-wider text-gray-500 font-medium">Type</dt>
+                  <dd className="text-charcoal-900 font-medium">{product.blockPrintType}</dd>
                 </div>
                 <div className="space-y-2">
                   <dt className="text-xs uppercase tracking-wider text-gray-500 font-medium">Care</dt>
@@ -174,88 +296,30 @@ export default function ProductPage() {
               </div>
             </div>
 
-            {/* The Maker's Story */}
-            <div className="border-t pt-8" style={{ borderColor: 'rgba(212,175,55,0.2)' }}>
-              <h3 className="text-lg font-semibold text-charcoal-900 mb-6 font-serif">
-                The Maker's Story
-              </h3>
-              <div className="prose prose-lg max-w-none">
-                <p className="text-gray-700 leading-relaxed font-light italic">
-                  In the quiet courtyards of Lahore, where time moves to the rhythm of carved wooden blocks, 
-                  our artisans breathe life into fabric. Each impression is a conversation between hand and cloth, 
-                  a meditation passed down through generations. The block, worn smooth by countless touches, 
-                  carries the memory of every pattern it has ever pressed into fabric.
-                </p>
-                <p className="text-gray-700 leading-relaxed font-light italic mt-4">
-                  Natural pigments derived from earth, flower, and stone create hues that deepen with time, 
-                  becoming more beautiful with every wear. This is not merely clothing; it is a piece of living history, 
-                  a testament to the slow, deliberate art of hand-block printing that has adorned royalty for centuries.
-                </p>
-              </div>
-            </div>
-
-            {/* Luxury Testimonials */}
-            <div className="border-t pt-8" style={{ borderColor: 'rgba(212,175,55,0.2)' }}>
-              <h3 className="text-lg font-semibold text-charcoal-900 mb-6 font-serif">
-                What Our Clients Say
-              </h3>
-              <div className="space-y-6">
-                <div className="p-6 rounded-2xl border" style={{ borderColor: 'rgba(212,175,55,0.3)', backgroundColor: '#FFFFF0' }}>
-                  <blockquote className="font-serif text-lg text-gray-700 italic leading-relaxed mb-4">
-                    "The block print detail is even more beautiful in person. A true heirloom piece that I'll treasure for years."
-                  </blockquote>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
-                      <span className="text-gold font-semibold text-sm">AK</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-charcoal-900">Ayesha Khan</p>
-                      <p className="text-xs text-gray-500">Karachi</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="p-6 rounded-2xl border" style={{ borderColor: 'rgba(212,175,55,0.3)', backgroundColor: '#FFFFF0' }}>
-                  <blockquote className="font-serif text-lg text-gray-700 italic leading-relaxed mb-4">
-                    "Exquisite craftsmanship and attention to detail. This piece tells a story with every pattern."
-                  </blockquote>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
-                      <span className="text-gold font-semibold text-sm">FM</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-charcoal-900">Fatima Mahmood</p>
-                      <p className="text-xs text-gray-500">Lahore</p>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="p-6 rounded-2xl border" style={{ borderColor: 'rgba(212,175,55,0.3)', backgroundColor: '#FFFFF0' }}>
-                  <blockquote className="font-serif text-lg text-gray-700 italic leading-relaxed mb-4">
-                    "The quality of fabric and precision of block printing exceeded all my expectations. Absolutely worth every penny."
-                  </blockquote>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
-                      <span className="text-gold font-semibold text-sm">SA</span>
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-charcoal-900">Sara Ahmed</p>
-                      <p className="text-xs text-gray-500">Islamabad</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {/* Size Guide Trigger */}
+            <div className="pt-4">
+              <button
+                onClick={() => setIsSizeGuideOpen(true)}
+                className="text-crimson font-bold text-sm hover:underline flex items-center gap-2"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+                View Size Guide
+              </button>
             </div>
 
             {/* Action Buttons */}
             <div className="space-y-4 pt-6">
-              <Button
-                size="lg"
-                className="w-full"
-                onClick={handleAddToCart}
-              >
-                Add to Cart
-              </Button>
+              <motion.div whileTap={{ scale: 0.98 }}>
+                <Button
+                  size="lg"
+                  className="w-full"
+                  onClick={handleAddToCart}
+                >
+                  Add to Cart
+                </Button>
+              </motion.div>
 
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`}
@@ -278,158 +342,27 @@ export default function ProductPage() {
                   <dd className="text-charcoal-900">{product.category}</dd>
                 </div>
                 <div className="flex justify-between">
-                  <dt className="text-gray-600">Fabric</dt>
-                  <dd className="text-charcoal-900">{product.fabric}</dd>
-                </div>
-                <div className="flex justify-between">
-                  <dt className="text-gray-600">Block Print Type</dt>
-                  <dd className="text-charcoal-900">{product.blockPrintType}</dd>
+                  <dt className="text-gray-600">SKU</dt>
+                  <dd className="text-charcoal-900">{product.sku}</dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-gray-600">Product ID</dt>
-                  <dd className="text-charcoal-900 font-mono">{product.id}</dd>
+                  <dd className="text-charcoal-900 font-mono text-xs">{product.id}</dd>
                 </div>
               </dl>
             </div>
           </div>
         </div>
 
-        {/* You May Also Like - Related Products */}
-        <div className="mt-20 pt-16 border-t" style={{ borderColor: 'rgba(212,175,55,0.2)' }}>
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-serif text-charcoal-900 mb-4">
-              You May Also Like
-            </h2>
-            <p className="text-gray-600 text-lg font-light">
-              Complete your collection with these handcrafted pieces
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Related Product 1 */}
-            <div className="group relative bg-ivory rounded-2xl shadow-sm border border-transparent overflow-hidden transition-all duration-300 hover:shadow-lg">
-              <div className="aspect-[3/4] relative overflow-hidden bg-charcoal-900/5">
-                <div className="absolute inset-0 bg-gradient-to-br from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest">
-                  Lawn
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="text-white text-sm font-medium bg-black/50 px-3 py-1 rounded-full">
-                    View Details
-                  </span>
-                </div>
-              </div>
-              <div className="p-4">
-                <h3 className="font-serif text-base text-charcoal-900 mb-2 group-hover:text-gold transition-colors">
-                  Royal Garden Ensemble
-                </h3>
-                <p className="text-sm text-gray-600 mb-3">Traditional Mughal motifs</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-charcoal-900 font-semibold">PKR 8,500</span>
-                  <button className="text-gold hover:text-charcoal-900 transition-colors">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
+        {/* Dynamic Related Products */}
+        <RelatedProducts currentProduct={product} />
 
-            {/* Related Product 2 */}
-            <div className="group relative bg-ivory rounded-2xl shadow-sm border border-transparent overflow-hidden transition-all duration-300 hover:shadow-lg">
-              <div className="aspect-[3/4] relative overflow-hidden bg-charcoal-900/5">
-                <div className="absolute inset-0 bg-gradient-to-br from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest">
-                  Organza
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="text-white text-sm font-medium bg-black/50 px-3 py-1 rounded-full">
-                    View Details
-                  </span>
-                </div>
-              </div>
-              <div className="p-4">
-                <h3 className="font-serif text-base text-charcoal-900 mb-2 group-hover:text-gold transition-colors">
-                  Summer Bloom Collection
-                </h3>
-                <p className="text-sm text-gray-600 mb-3">Delicate floral patterns</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-charcoal-900 font-semibold">PKR 12,000</span>
-                  <button className="text-gold hover:text-charcoal-900 transition-colors">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Related Product 3 */}
-            <div className="group relative bg-ivory rounded-2xl shadow-sm border border-transparent overflow-hidden transition-all duration-300 hover:shadow-lg">
-              <div className="aspect-[3/4] relative overflow-hidden bg-charcoal-900/5">
-                <div className="absolute inset-0 bg-gradient-to-br from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest">
-                  Karandi
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="text-white text-sm font-medium bg-black/50 px-3 py-1 rounded-full">
-                    View Details
-                  </span>
-                </div>
-              </div>
-              <div className="p-4">
-                <h3 className="font-serif text-base text-charcoal-900 mb-2 group-hover:text-gold transition-colors">
-                  Autumn Heritage
-                </h3>
-                <p className="text-sm text-gray-600 mb-3">Rich earth tone designs</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-charcoal-900 font-semibold">PKR 9,800</span>
-                  <button className="text-gold hover:text-charcoal-900 transition-colors">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Related Product 4 */}
-            <div className="group relative bg-ivory rounded-2xl shadow-sm border border-transparent overflow-hidden transition-all duration-300 hover:shadow-lg">
-              <div className="aspect-[3/4] relative overflow-hidden bg-charcoal-900/5">
-                <div className="absolute inset-0 bg-gradient-to-br from-gold/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest">
-                  Silk
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <span className="text-white text-sm font-medium bg-black/50 px-3 py-1 rounded-full">
-                    View Details
-                  </span>
-                </div>
-              </div>
-              <div className="p-4">
-                <h3 className="font-serif text-base text-charcoal-900 mb-2 group-hover:text-gold transition-colors">
-                  Midnight Luxury
-                </h3>
-                <p className="text-sm text-gray-600 mb-3">Premium silk collection</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-charcoal-900 font-semibold">PKR 15,500</span>
-                  <button className="text-gold hover:text-charcoal-900 transition-colors">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       </Container>
 
       {/* Luxury Lightbox */}
       <AnimatePresence>
         {isLightboxOpen && product?.images && (
           <>
-            {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -438,48 +371,15 @@ export default function ProductPage() {
               className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
               onClick={closeLightbox}
             >
-              {/* Close Button */}
               <button
                 onClick={closeLightbox}
                 className="absolute top-6 right-6 text-white/80 hover:text-white transition-colors z-10"
-                aria-label="Close lightbox"
               >
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
 
-              {/* Navigation Buttons */}
-              {product.images.length > 1 && (
-                <>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigateImage('prev');
-                    }}
-                    className="absolute left-6 text-white/80 hover:text-white transition-colors z-10"
-                    aria-label="Previous image"
-                  >
-                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigateImage('next');
-                    }}
-                    className="absolute right-6 text-white/80 hover:text-white transition-colors z-10"
-                    aria-label="Next image"
-                  >
-                    <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </button>
-                </>
-              )}
-
-              {/* Main Image */}
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -488,33 +388,58 @@ export default function ProductPage() {
                 className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center p-8"
                 onClick={(e) => e.stopPropagation()}
               >
+                {product.images.length > 1 && (
+                  <>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigateImage('prev');
+                      }}
+                      className="absolute left-6 text-white/80 hover:text-white transition-colors z-10"
+                      aria-label="Previous image"
+                    >
+                      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigateImage('next');
+                      }}
+                      className="absolute right-6 text-white/80 hover:text-white transition-colors z-10"
+                      aria-label="Next image"
+                    >
+                      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+                    </button>
+                  </>
+                )}
+
                 <div className="relative w-full h-full max-w-4xl max-h-[80vh]">
                   <Image
                     src={product.images[currentImageIndex]}
-                    alt={`${product.name} - Image ${currentImageIndex + 1}`}
+                    alt={product.name}
                     fill
                     className="object-contain"
-                    sizes="(max-width: 1024px) 100vw, 80vw"
+                    sizes="80vw"
                     priority
                   />
                 </div>
+
+                {product.images.length > 1 && (
+                  <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-white/80 text-sm font-medium bg-black/50 px-4 py-2 rounded-full">
+                    {currentImageIndex + 1} / {product.images.length}
+                  </div>
+                )}
               </motion.div>
-
-              {/* Image Counter */}
-              {product.images.length > 1 && (
-                <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 text-white/80 text-sm font-medium bg-black/50 px-4 py-2 rounded-full">
-                  {currentImageIndex + 1} / {product.images.length}
-                </div>
-              )}
-
-              {/* Product Name */}
-              <div className="absolute top-6 left-6 text-white/90 font-serif text-xl">
-                {product.name}
-              </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
+
+      <SizeGuideModal isOpen={isSizeGuideOpen} onClose={() => setIsSizeGuideOpen(false)} />
 
       {/* Mobile Sticky Add to Cart */}
       <div className="fixed bottom-0 left-0 right-0 bg-ivory border-t shadow-lg z-40 md:hidden" style={{ borderColor: 'rgba(212,175,55,0.3)' }}>

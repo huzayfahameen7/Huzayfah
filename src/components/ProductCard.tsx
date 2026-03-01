@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { Eye, Heart, Shuffle, ShoppingCart, Star } from 'lucide-react';
 import { Product } from '../types';
 import { useCart } from '../contexts/CartContext';
+import { useToast } from '../contexts/ToastContext';
 
 interface ProductCardProps {
   product: Product;
@@ -17,6 +18,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, onQuickView, onWishlist, onCompare }: ProductCardProps) {
   const { addItem, openCart } = useCart();
+  const { addToast } = useToast();
   const [isWishlisted, setIsWishlisted] = React.useState(false);
   const [isCompared, setIsCompared] = React.useState(false);
   const [isHovered, setIsHovered] = React.useState(false);
@@ -33,6 +35,7 @@ export default function ProductCard({ product, onQuickView, onWishlist, onCompar
     e.preventDefault();
     e.stopPropagation();
     addItem({ ...product, price: getDynamicPrice() });
+    addToast(`${product.name} added to cart!`, 'success');
     openCart();
   };
 
@@ -47,7 +50,12 @@ export default function ProductCard({ product, onQuickView, onWishlist, onCompar
   const handleWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
+    const newStatus = !isWishlisted;
+    setIsWishlisted(newStatus);
+    addToast(
+      newStatus ? `${product.name} added to wishlist!` : `${product.name} removed from wishlist!`,
+      'info'
+    );
     if (onWishlist) {
       onWishlist(product);
     }
@@ -197,12 +205,12 @@ export default function ProductCard({ product, onQuickView, onWishlist, onCompar
           </motion.div>
         </div>
 
-        <div className="p-4 bg-white">
+        <div className="p-3 md:p-4 bg-white">
           <motion.h3
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.5 }}
-            className="font-display text-lg font-bold text-charcoal mb-2 line-clamp-2 group-hover:text-crimson transition-colors"
+            className="font-display text-sm md:text-lg font-bold text-charcoal mb-1 md:mb-2 line-clamp-2 group-hover:text-crimson transition-colors"
           >
             {product.name}
           </motion.h3>
@@ -211,29 +219,29 @@ export default function ProductCard({ product, onQuickView, onWishlist, onCompar
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="flex items-center gap-1 mb-2"
+            className="flex items-center gap-1 mb-1 md:mb-2"
           >
             {renderStars(rating)}
-            <span className="text-xs text-gray-600 ml-1">({rating})</span>
+            <span className="hidden md:inline text-xs text-gray-600 ml-1">({rating})</span>
           </motion.div>
 
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.5 }}
-            className="text-sm text-gray-600 mb-3 line-clamp-2"
+            className="hidden md:line-clamp-2 text-sm text-gray-600 mb-3"
           >
             {product.shortDescription}
           </motion.p>
 
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mt-auto">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4, duration: 0.5 }}
               className="flex flex-col"
             >
-              <span className="font-display text-xl font-bold text-charcoal">
+              <span className="font-display text-base md:text-xl font-bold text-charcoal leading-tight">
                 PKR {getDynamicPrice().toLocaleString()}
               </span>
               {product.discount && product.discount > 0 && (
@@ -248,11 +256,11 @@ export default function ProductCard({ product, onQuickView, onWishlist, onCompar
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5, duration: 0.5 }}
               whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
+              whileTap={{ scale: 0.9 }}
               onClick={handleAddToCart}
-              className="w-12 h-12 bg-crimson text-white rounded-full flex items-center justify-center shadow-lg hover:bg-crimson-dark transition-colors"
+              className="w-8 h-8 md:w-12 md:h-12 bg-crimson text-white rounded-full flex items-center justify-center shadow-lg hover:bg-crimson-dark transition-colors"
             >
-              <ShoppingCart className="w-5 h-5" />
+              <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
             </motion.button>
           </div>
         </div>
