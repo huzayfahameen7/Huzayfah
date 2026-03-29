@@ -30,7 +30,6 @@ const NavLink: React.FC<NavLinkProps> = ({ href, children, isActive }) => (
 export default function EnhancedNavigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { getTotalItems } = useCart();
@@ -100,8 +99,6 @@ export default function EnhancedNavigation() {
                   placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => setIsSearchOpen(true)}
-                  onBlur={() => setIsSearchOpen(false)}
                   className="w-48 md:w-64 px-4 py-2 rounded-full border border-crimson/20 bg-white/90 backdrop-blur-sm text-charcoal placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-crimson/50 focus:border-crimson transition-all"
                 />
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />

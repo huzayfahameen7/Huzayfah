@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ShoppingCart, Heart, Menu, ChevronDown } from 'lucide-react';
+import { Search, ShoppingCart, Heart, ChevronDown, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useRouter } from 'next/navigation';
+import MobileMenu from './MobileMenu';
 
 interface NavItem {
   name: string;
@@ -20,6 +21,7 @@ const Header: React.FC = () => {
   const { getItemCount } = useWishlist();
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -82,6 +84,15 @@ const Header: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex items-center justify-between h-20">
             
+            {/* Mobile Menu Toggle */}
+            <button
+              className="lg:hidden p-2 -ml-2 text-charcoal"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Open Menu"
+            >
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+
             {/* Logo */}
             <Link href="/" className="flex items-center font-display text-2xl md:text-3xl font-black text-charcoal tracking-tight">
               ELEGANCE BY MAHNOOR
@@ -207,6 +218,7 @@ const Header: React.FC = () => {
           </div>
         </div>
       </header>
+      <MobileMenu isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
     </>
   );
 };

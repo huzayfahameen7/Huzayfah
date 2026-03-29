@@ -9,32 +9,32 @@ import { Instagram } from 'lucide-react';
 // Local luxury product imagery for Instagram strip (7–12)
 const instagramShots = [
   {
-    src: '/product image/product-7.jpg',
+    src: '/product-images/product-7.jpg',
     title: 'Royal Velvet Touch',
     label: 'Look 07',
   },
   {
-    src: '/product image/product-8.jpg',
+    src: '/product-images/product-8.jpg',
     title: 'Golden Grace Edition',
     label: 'Look 08',
   },
   {
-    src: '/product image/product-9.jpg',
+    src: '/product-images/product-9.jpg',
     title: 'Midnight Bloom Collection',
     label: 'Look 09',
   },
   {
-    src: '/product image/product-10.jpg',
+    src: '/product-images/product-10.jpg',
     title: 'Opulent Pearl Ensemble',
     label: 'Look 10',
   },
   {
-    src: '/product image/product-11.jpg',
+    src: '/product-images/product-11.jpg',
     title: 'Regal Ember Luxe',
     label: 'Look 11',
   },
   {
-    src: '/product image/product-12.jpg',
+    src: '/product-images/product-12.jpg',
     title: 'Moonlit Silk Reverie',
     label: 'Look 12',
   },

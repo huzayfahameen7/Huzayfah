@@ -71,14 +71,14 @@ export default function CartDrawer() {
                   <div className="space-y-4">
                     {items.map((item, index) => (
                       <motion.div
-                        key={`${item.id}-${item.size || 'default'}`}
+                        key={item.cartItemId}
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.1, duration: 0.3 }}
                         className="flex gap-4 p-4 bg-gray-50 rounded-xl"
                       >
                         {/* Product Image */}
-                        <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
+                        <div className="w-20 h-20 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0 relative">
                           <Image
                             src={item.images[0] || 'https://placehold.co/600x800?text=Product'}
                             alt={item.name}
@@ -100,7 +100,7 @@ export default function CartDrawer() {
                               </p>
                             </div>
                             <button
-                              onClick={() => removeItem(item.id, item.size)}
+                              onClick={() => removeItem(item.cartItemId)}
                               className="p-1 rounded-full hover:bg-red-100 transition-colors"
                             >
                               <Trash2 className="w-4 h-4 text-red-500" />
@@ -113,7 +113,7 @@ export default function CartDrawer() {
                             </div>
                             <div className="flex items-center gap-2">
                               <button
-                                onClick={() => updateQuantity(item.id, item.size, Math.max(1, item.quantity - 1))}
+                                onClick={() => updateQuantity(item.cartItemId, Math.max(1, item.quantity - 1))}
                                 className="w-8 h-8 rounded border border-gray-300 flex items-center justify-center hover:border-crimson transition-colors"
                               >
                                 <Minus className="w-3 h-3" />
@@ -122,7 +122,7 @@ export default function CartDrawer() {
                                 {item.quantity}
                               </span>
                               <button
-                                onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
+                                onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
                                 className="w-8 h-8 rounded border border-gray-300 flex items-center justify-center hover:border-crimson transition-colors"
                               >
                                 <Plus className="w-3 h-3" />

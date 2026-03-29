@@ -35,7 +35,7 @@ const featuredProducts: Product[] = [
     price: 5500,
     description: 'Premium pure silk fabric with traditional hand-block printed designs',
     fabric: 'Black Silk',
-    images: ['/product image/product-2.jpg'],
+    images: ['/product-images/product-2.jpg'],
     category: 'Premium',
     blockPrintType: 'Modern',
     customizable: true,
@@ -51,7 +51,7 @@ const featuredProducts: Product[] = [
     price: 4000,
     description: 'Lightweight organza fabric with traditional hand-block printed designs',
     fabric: 'White Organza',
-    images: ['/product image/product-3.jpg'],
+    images: ['/product-images/product-3.jpg'],
     category: 'Premium',
     blockPrintType: 'Contemporary',
     customizable: true,
@@ -67,7 +67,7 @@ const featuredProducts: Product[] = [
     price: 4500,
     description: 'Delicate chiffon fabric with traditional hand-block printed designs',
     fabric: 'White Chiffon',
-    images: ['/product image/product-4.jpg'],
+    images: ['/product-images/product-4.jpg'],
     category: 'Premium',
     blockPrintType: 'Modern',
     customizable: true,
@@ -83,7 +83,7 @@ const featuredProducts: Product[] = [
     price: 3500,
     description: 'Comfortable kaftan with traditional hand-block printed designs',
     fabric: 'Cotton',
-    images: ['/product image/product-5.jpg'],
+    images: ['/product-images/product-5.jpg'],
     category: 'Casual',
     blockPrintType: 'Traditional',
     customizable: true,
@@ -99,7 +99,7 @@ const featuredProducts: Product[] = [
     price: 3000,
     description: 'Summer lawn fabric with modern hand-block printed designs',
     fabric: 'Summer Lawn',
-    images: ['/product image/product-6.jpg'],
+    images: ['/product-images/product-6.jpg'],
     category: 'Unstitched',
     blockPrintType: 'Modern',
     customizable: true,
@@ -115,7 +115,7 @@ const featuredProducts: Product[] = [
     price: 6000,
     description: 'Elegant pishwas with traditional hand-block printed designs',
     fabric: 'Silk Blend',
-    images: ['/product image/product-7.jpg'],
+    images: ['/product-images/product-7.jpg'],
     category: 'Festive',
     blockPrintType: 'Traditional',
     customizable: true,
@@ -131,7 +131,7 @@ const featuredProducts: Product[] = [
     price: 5000,
     description: 'Luxurious silk kaftan with hand-block printed designs',
     fabric: 'Pure Silk',
-    images: ['/product image/product-8.jpg'],
+    images: ['/product-images/product-8.jpg'],
     category: 'Luxury',
     blockPrintType: 'Modern',
     customizable: true,
@@ -147,7 +147,7 @@ const featuredProducts: Product[] = [
     price: 2500,
     description: 'Comfortable cotton lawn with hand-block printed designs',
     fabric: 'Cotton Lawn',
-    images: ['/product image/product-9.jpg'],
+    images: ['/product-images/product-9.jpg'],
     category: 'Casual',
     blockPrintType: 'Traditional',
     customizable: true,
@@ -163,7 +163,7 @@ const featuredProducts: Product[] = [
     price: 4000,
     description: 'Lightweight chiffon dress with hand-block printed designs',
     fabric: 'Chiffon',
-    images: ['/product image/product-10.jpg'],
+    images: ['/product-images/product-10.jpg'],
     category: 'Party Wear',
     blockPrintType: 'Contemporary',
     customizable: true,
@@ -179,7 +179,7 @@ const featuredProducts: Product[] = [
     price: 5500,
     description: 'Premium organza suit with hand-block printed designs',
     fabric: 'Organza',
-    images: ['/product image/product-11.jpg'],
+    images: ['/product-images/product-11.jpg'],
     category: 'Festive',
     blockPrintType: 'Traditional',
     customizable: true,
@@ -195,7 +195,7 @@ const featuredProducts: Product[] = [
     price: 3200,
     description: 'Mixed lawn fabric with hand-block printed designs',
     fabric: 'Lawn Mix',
-    images: ['/product image/product-12.jpg'],
+    images: ['/product-images/product-12.jpg'],
     category: 'Unstitched',
     blockPrintType: 'Modern',
     customizable: true,
@@ -211,7 +211,7 @@ const featuredProducts: Product[] = [
     price: 6500,
     description: 'Premium festive wear with hand-block printed designs',
     fabric: 'Silk',
-    images: ['/product image/product-13.jpg'],
+    images: ['/product-images/product-13.jpg'],
     category: 'Festive',
     blockPrintType: 'Traditional',
     customizable: true,
@@ -254,9 +254,9 @@ const categories = [
   { name: '3-Piece', image: 'https://placehold.co/600x800?text=3-Piece', href: '/products?category=3-piece' },
   { name: 'Pishwas', image: 'https://placehold.co/600x800?text=Pishwas', href: '/products?category=pishwas' },
   { name: 'Sari', image: 'https://placehold.co/600x800?text=Sari', href: '/products?category=sari' },
-  { name: 'Kaftan', image: '/categories/kaftan.jpg', href: '/products?category=kaftan' },
-  { name: 'Co-ords', image: '/categories/co-ords.jpg', href: '/products?category=co-ords' },
-  { name: 'Accessories', image: '/categories/accessories.jpg', href: '/products?category=accessories' }
+  { name: 'Kaftan', image: 'https://placehold.co/600x800?text=Kaftan', href: '/products?category=kaftan' },
+  { name: 'Co-ords', image: 'https://placehold.co/600x800?text=Co-ords', href: '/products?category=co-ords' },
+  { name: 'Accessories', image: 'https://placehold.co/600x800?text=Accessories', href: '/products?category=accessories' }
 ];
 
 export default function HomePage() {
@@ -484,7 +484,7 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4, ease: 'easeInOut' }}
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
             >
               {getTabProducts().map((product, index) => (
                 <motion.div

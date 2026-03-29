@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import '@/styles/globals.css';
 import { CartProvider } from '@/contexts/CartContext';
 import { WishlistProvider } from '@/contexts/WishlistContext';
+import { ToastProvider } from '@/contexts/ToastContext';
 import Header from '@/components/Header';
 import CartDrawer from '@/components/CartDrawer';
 import FloatingWhatsAppButton from '@/components/FloatingWhatsAppButton';
@@ -36,17 +37,19 @@ export default function RootLayout({
         />
       </head>
       <body className="bg-[#FFDFB9] text-charcoal">
-        <CartProvider>
-          <WishlistProvider>
-            <Header />
-            <CartDrawer />
-            <FloatingWhatsAppButton />
-            <main>
-              {children}
-            </main>
-            <Footer />
-          </WishlistProvider>
-        </CartProvider>
+        <ToastProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <Header />
+              <CartDrawer />
+              <FloatingWhatsAppButton />
+              <main>
+                {children}
+              </main>
+              <Footer />
+            </WishlistProvider>
+          </CartProvider>
+        </ToastProvider>
       </body>
     </html>
   );

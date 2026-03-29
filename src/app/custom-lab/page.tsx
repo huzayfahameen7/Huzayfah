@@ -14,7 +14,7 @@ const sampleProduct: Product = {
   price: 5000,
   description: 'Design your own unique piece with our custom print service',
   fabric: 'Custom Choice',
-  images: ['/product image/custom-design.jpg'],
+  images: ['/product-images/product-1.jpg'],
   category: 'Custom',
   blockPrintType: 'Custom',
   customizable: true,
@@ -114,8 +114,6 @@ export default function CustomLabPage() {
           <div>
             <CustomPrintLab 
               product={sampleProduct} 
-              customDesignUrl={previewUrl}
-              onSaveSuccess={() => setSaveMessage('Design saved to cart!')}
             />
           </div>
 

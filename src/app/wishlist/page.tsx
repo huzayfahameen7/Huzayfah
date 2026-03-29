@@ -10,7 +10,7 @@ export default function WishlistPage() {
   const { items, removeItem, clearWishlist } = useWishlist();
   const [isRemoving, setIsRemoving] = useState<string | null>(null);
 
-  const handleRemove = (id: string, name: string) => {
+  const handleRemove = (id: string) => {
     setIsRemoving(id);
     setTimeout(() => {
       removeItem(id);
@@ -78,7 +78,7 @@ export default function WishlistPage() {
                 <div className="relative">
                   {/* Remove Button */}
                   <button
-                    onClick={() => handleRemove(item.id, item.name)}
+                    onClick={() => handleRemove(item.id)}
                     className="absolute top-4 right-4 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors z-10"
                     disabled={isRemoving === item.id}
                   >

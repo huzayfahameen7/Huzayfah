@@ -71,20 +71,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
       const key = selectedCustomization?.print ?? (selectedCustomization
         ? [selectedCustomization.garmentType, selectedCustomization.fabric, selectedCustomization.pattern, selectedCustomization.baseColor, selectedCustomization.secondaryColor, selectedCustomization.accent1Color, selectedCustomization.accent2Color, selectedCustomization.goldFoil].filter(Boolean).join('-') || 'custom'
         : 'default');
-      const cartItemId = `${product.id}::${key}`;
+      const cartItemId = `${product.id}::${selectedCustomization?.print ?? (product as any).size ?? key}`;
 
       const existingItem = prevItems.find(item => item.cartItemId === cartItemId);
       if (existingItem) {
         return prevItems.map(item =>
           item.cartItemId === cartItemId
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + (product.quantity || 1) }
             : item
         );
       }
 
       const newItem: CartItem = {
         ...product,
-        quantity: 1,
+        quantity: product.quantity || 1,
         cartItemId,
         selectedCustomization: selectedCustomization ? { ...selectedCustomization } : { print: null },
       };

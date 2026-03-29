@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Minus, Plus, Star } from 'lucide-react';
+import { X, Minus, Plus } from 'lucide-react';
 import Image from 'next/image';
 import { Product } from '../types';
 import { useCart } from '../contexts/CartContext';
@@ -14,7 +14,7 @@ interface QuickViewModalProps {
 }
 
 export default function QuickViewModal({ product, isOpen, onClose }: QuickViewModalProps) {
-  const { addItem, items } = useCart();
+  const { addItem, items, openCart } = useCart();
   const [selectedSize, setSelectedSize] = React.useState('M');
   const [quantity, setQuantity] = React.useState(1);
 
@@ -33,6 +33,7 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
       price: getDynamicPrice()
     };
     addItem(itemToAdd);
+    openCart();
     onClose();
   };
 
@@ -44,33 +45,6 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
   };
 
   const isInCart = items.some(item => item.id === product.id && item.size === selectedSize);
-
-  const renderStars = (rating: number) => {
-    const stars = [];
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
-
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(
-        <Star key={i} className="w-4 h-4 fill-crimson text-crimson" />
-      );
-    }
-
-    if (hasHalfStar) {
-      stars.push(
-        <Star key="half" className="w-4 h-4 fill-crimson/50 text-crimson" />
-      );
-    }
-
-    const emptyStars = 5 - Math.ceil(rating);
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(
-        <Star key={`empty-${i}`} className="w-4 h-4 text-gray-300" />
-      );
-    }
-
-    return stars;
-  };
 
   return (
     <AnimatePresence>
@@ -117,6 +91,10 @@ export default function QuickViewModal({ product, isOpen, onClose }: QuickViewMo
                       alt={product.name}
                       fill
                       className="object-cover"
+                      unoptimized
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://placehold.co/600x800?text=Elegance+By+Mahnoor';
+                      }}
                     />
                     
                     {/* Badges */}
